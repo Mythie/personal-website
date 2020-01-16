@@ -7,6 +7,11 @@ module.exports = {
     github: 'Mythie',
     email: 'bWVAbHVjYXNqYW1lc3NtaXRoLm1l',
   },
+  heroPhrases: [
+    'Full Stack Developer... ',
+    'DevOps Engineer... ',
+    'Problem Solver... ',
+  ],
   content: {
     pagination: {
       postsPerPage: 20,

@@ -1,25 +1,35 @@
-import React, { useEffect } from 'react';
-import ParticlesBg from 'particles-bg';
+import React, {
+  useEffect, lazy, Suspense, useState,
+} from 'react';
+import { useStaticQuery, graphql } from 'gatsby';
 import Typing from '../Typing';
+import loadable from '@loadable/component'
 
-
-const phrases = [
-  'Full Stack Developer... ',
-  'DevOps Engineer... ',
-  'Problem Solver... ',
-];
+// eslint-disable-next-line
+const ParticlesBg = loadable(() => import('particles-bg')); 
 
 const Hero = () => {
+  const data = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          heroPhrases
+        }
+      }
+    }
+  `);
+
+  const { heroPhrases: phrases } = data.site.siteMetadata;
+
   useEffect(() => {
-    console.log('Setting up partcles fixer');
-
+    // We need this to cleanup after ParticlesBg since it doesn't manage its lifecycle
     return () => {
-      console.log('Clearing intervals');
       let id = setInterval((noop) => noop, 1000);
-      console.log(id);
 
-      while (id--) {
+      while (id) {
         clearInterval(id);
+
+        id -= 1;
       }
     };
   }, []);
