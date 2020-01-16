@@ -1,0 +1,9 @@
+@keyframes TypingBlink {
+  50% {
+    color: transparent;
+  }
+}
+
+.Typing--blinker {
+  /* animation: TypingBlink 250ms step-end infinite alternate; */
+}
