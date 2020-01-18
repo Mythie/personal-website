@@ -28,7 +28,7 @@ const Post = ({ data: { mdx } }) => {
   return (
     <PostLayout>
       <SEO title={title} description={excerpt} />
-      <article style={{ minHeight: '80vh' }} className="py-3">
+      <article style={{ minHeight: '80vh' }} className="Post--Article py-3">
         <h1 className="text-5xl pb-5">
           {title}
           <small className="block text-sm">

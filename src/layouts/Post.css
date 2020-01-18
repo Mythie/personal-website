@@ -1,4 +1,29 @@
-p {
-  @apply pb-3;
+
+.Post--Article {
   font-size: 1.1rem;
+}
+
+.Post--Article p {
+  @apply pb-3;
+  line-height: 1.5;
+}
+
+.Post--Article a {
+  @apply font-semibold text-gray-700 underline;
+}
+
+.Post--Article a:hover {
+  @apply text-gray-900;
+}
+
+.Post--Article h1, h2, h3, h4, h5, h6 {
+  @apply py-3;
+  list-style: initial;
+  list-style-position: inside;
+}
+
+.Post--Article ul, li {
+  @apply pb-3;
+  list-style: initial;
+  list-style-position: inside;
 }

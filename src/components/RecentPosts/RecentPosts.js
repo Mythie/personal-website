@@ -6,7 +6,7 @@ const RecentPosts = () => {
   const data = useStaticQuery(graphql`
     query RecentPosts {
       allFile(
-        filter: { sourceInstanceName: { eq: "blog" } }, 
+        filter: { sourceInstanceName: { eq: "blog" }, extension: { eq: "mdx" } }, 
         sort: {
           fields: childMdx___frontmatter___posted_on, 
           order: DESC
