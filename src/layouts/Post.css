@@ -1,4 +1,3 @@
-
 .Post--Article {
   font-size: 1.1rem;
 }
@@ -16,14 +15,28 @@
   @apply text-gray-900;
 }
 
-.Post--Article h1, h2, h3, h4, h5, h6 {
+.Post--Article h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   @apply py-3;
-  list-style: initial;
+  list-style         : initial;
   list-style-position: inside;
 }
 
-.Post--Article ul, li {
+.Post--Article ul,
+li {
   @apply pb-3;
-  list-style: initial;
+  list-style         : initial;
   list-style-position: inside;
+}
+
+.Post--Article blockquote {
+  @apply pl-3 py-2 my-3 border-l-4 border-solid border-gray-400 italic;
+}
+
+.Post--Article blockquote p {
+  @apply p-0;
 }
