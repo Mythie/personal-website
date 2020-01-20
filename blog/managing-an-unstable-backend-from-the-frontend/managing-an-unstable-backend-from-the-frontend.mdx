@@ -1,0 +1,144 @@
+---
+title: Managing an unstable Backend from the Frontend
+slug: managing-an-unstable-backend-from-the-frontend
+posted-on: 2020-01-23
+author: Lucas
+---
+
+Whilst working on a Frontend project for a client I had troubles with their Backend periodically going down and halting after a few rapid requests, these constraints really hurt me in the development of their Frontend but after performing some research I was able to work past these pitfalls and utilise several techniques to continue development.
+
+Below you will find my personal notes on how I managed this situation which you may also apply in the event that you face such a problem.
+
+## Cache Everything
+
+The fastest and easiest way to start resolving Backend issues is to cache everything that can be cached, this will involve learning the system and how often data changes but a key take away is that most **GET** requests can be cached.
+
+After spending some time I was able to reduce the amount of components that would need to hit the API by first having them check localStorage before performing an outbound request. 
+
+#### But what if the data is old?
+
+Obviously caching everything where possible can lead to times in which data displayed does not reflect the true state of the system as changes may have occurred (data may have been processed, updates may have been made to the user or resource), this obviously is an issue but not without solutions.
+
+Initially to solve the problem of old data I would set expiries for cache stores, in the case of the system I worked with I knew that *most* data was valid for approximately 5 minutes before the system would have performed enough processing that it was no longer valid, therefore I set a cache expiry for 5 minutes.
+
+Below you can find some example code of how I managed caching in [VueJS](https://vuejs.org), this route uses a High Order Component (HOC) strategy in order to provide cached data. This was decided upon as it reduced code duplication across the Frontend.
+
+```html
+<template>
+  <component :is="renderComponent" :data="data">
+</template>
+
+<script>
+import axios from 'axios';
+
+const ONE_SECOND = 1000;
+const ONE_MINUTE = ONE_SECOND * 60;
+
+const CACHE_EXPIRY = ONE_MINUTE * 5;
+const UPDATE_INTERVAL = ONE_MINUTE;
+
+export default {
+  name: 'MyCacheComponent',
+
+  props: {
+    cacheKey: String,
+    request: Object,
+    renderComponent: [Object, String],
+  },
+
+  data() {
+    return {
+      intervalId: false,
+      data: null,
+    }
+  },
+
+  computed: {
+    now() {
+      return (new Date()).valueOf();
+    },
+  },
+
+  methods: {
+    fetchData() {
+      // Check if we have the key in localStorage
+      if(window.localStorage.getItem(this.cacheKey)) {
+        // If we do then parse it
+        const item = JSON.parse(window.localStorage.getItem(this.cacheKey));
+
+        // If the data hasn't passed the expiry then we can simply use it
+        if ((item.created_at - this.now) < CACHE_EXPIRY) {
+          this.data = item.data;
+
+          return; // As much as I hate empty returns, I do like dropping branches
+        }
+      }
+
+      // Otherwise lets fetch data from the API
+      this.fetchDataFromAPI();
+    },
+
+    fetchDataFromAPI() {
+      // Perform the API request and then
+      axios(this.request).then(({ data }) => {
+        // with the data create the cache in localStorage
+        window.localStorage.setItem(this.cacheKey, JSON.stringify({
+          data,
+          created_at: this.now,
+        }));
+
+        // Update the data for the child component
+        this.data = data;
+      })
+      .catch(err => console.warn); // On error just warn us in the console for now.
+    }
+
+    updateData() {
+      if (this.intervalId) {
+        window.clearInterval(this.intervalId);
+      }
+
+      this.intervalId = window.setInterval(this.fetchData, UPDATE_INTERVAL);
+    },
+  },
+
+  created() {
+    this.fetchData();
+    this.updateData();
+  },
+
+  destroyed() {
+    if (this.intervalId) {
+      window.clearTimeout(this.intervalId);
+    }
+  }
+}
+</script>
+
+<style>
+</style>
+```
+
+## Perform optimistic updates
+
+Whilst I generally frown at this practice as I find it very misleading from a user perspective, in the case of the problem it had merit. When dealing with a system that can be unreliable or take a long time to process requests providing your user an optimistic update allows you to give the illusion of a snappy and responsive system. With this project when submitting new resource information it was understood that it could take minutes to update, due to this I opted to utilise an Optimistic Update strategy once I knew enough about the params and data validations required to be sure that requests sent would succeed.
+
+> Optimistic updates only work if you validate the data before sending it!
+
+Whilst I still don't like this method as it keeps the user in the dark until something fails, it was a neccesary evil for this project.
+
+## Avoid parralel requests
+
+Whilst I didn't strictly follow this during development, I was always mindful as to the amount of requests that could be firing on any one page load. In the event that you're working with an incredibly unreliable system it may be a good approach to use a queuing library for firing off requests to the Backend to reduce the potential load it's receiving per client.
+
+## Implement request retries
+
+Request retries allow for more than one attempt at fetching data incase the connection is broken or refused, whilst many libraries such as [Axios](https://github.com/axios/axios) have built in support for retries, it's still not the worst idea to attempt an implementation by yourself for general learning purposes. Particularly cases where you need to cascade component updates based on data returned.
+
+Request retries allow us to fail gracefully by trying again, we may even include a timeout to give the system a cooldown period. Whilst this strategy shouldn't be used on its own, it should definitely be included with any other strategy and is one of the first things that should be implemented on the Frontend when dealing with unreliable systems.
+
+<div class="pb-3"></div>
+
+With that these are the 4 general approachs that I take when dealing with unreliable systems, if possible I would have loved to work on the Backend and bring it up to spec in terms of reliability and availability but unfortunately as is the case with many clients this are out of scope or out of budget. 
+
+If you find yourself in this situation I hope that these tips helped!
