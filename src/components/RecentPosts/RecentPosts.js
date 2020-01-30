@@ -32,7 +32,7 @@ const RecentPosts = () => {
   const posts = data.allFile.edges.map((x) => x.node.childMdx);
 
   return (
-    <section id="recent-posts" className="py-10 bg-gray-700 text-white">
+    <section id="recent-posts" className="py-10 bg-blue-600 text-white">
       <div className="container">
         <h2>My Recent Posts</h2>
         <div className="flex flex-wrap -mx-5">

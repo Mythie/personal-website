@@ -43,7 +43,7 @@ const ContactMe = () => {
           <p>{data.site.siteMetadata.contactMe}</p>
         </div>
         <div id="contact-me-action-image" className="hidden lg:block w-1/3 px-5">
-          <ContactMeSvg height="100%" width="100%" className="w-full" />
+          <ContactMeSvg height="100%" width="100%" className="w-2/3 mx-auto" />
         </div>
         <div id="contact-me-socials" className="w-1/2 sm:w-1/3 px-5 flex flex-col font-semibold">
           <a href={`https://github.com/${github}`} className="block p-5 text-lg transition-300 hover:bg-gray-200">

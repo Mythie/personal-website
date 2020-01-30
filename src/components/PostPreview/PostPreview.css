@@ -1,15 +1,14 @@
-.PostPreview--Article--ReadMore {
-}
+.PostPreview--Article--ReadMore {}
 
 .PostPreview--Article--ReadMore::before {
-  content: '';
+  content : '';
   position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
+  height  : 100%;
+  width   : 100%;
+  top     : 0;
+  left    : 0;
 }
 
 .PostPreview--Article:hover {
-  @apply bg-gray-600;
+  @apply bg-blue-500;
 }

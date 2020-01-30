@@ -40,7 +40,7 @@ const Hero = () => {
 
       {/* This is a dirty workaround to the lack of precise configuration for this element */}
       <div
-        className="bg-gray-700 absolute"
+        className="bg-blue-600 absolute"
         style={{
           zIndex: -1,
           height: '100%',
